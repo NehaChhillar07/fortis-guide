@@ -1,0 +1,922 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>myFortis Agent Portal Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: product-style shell — sticky left index (mirrors the portal's own sidebar) + reading column of module cards.
+   Palette and type are the portal's own design tokens (Manrope, brand green/red/golden, green-tinted greys). */
+:root{
+  --bg:#F6F7F7; --surface:#FFFFFF; --surface-2:#F0F2F1; --line:#E2E5E4; --line-2:#C4CBC7;
+  --fg:#2E3330; --fg-2:#4B5650; --fg-3:#606C65;
+  --green:#0CA854; --green-ink:#0E8746; --green-soft:#EFFEF5;
+  --red:#E83035; --red-ink:#C11419; --red-soft:#FFF1F1;
+  --gold:#CD984F; --gold-soft:#FFF8E6;
+  --orange:#EC670A; --orange-soft:#FFF4E5;
+  --violet:#7B3893; --violet-soft:#F5ECFB;
+  --shadow:0 4px 12px rgba(53,58,56,.06);
+  --f-body:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141716; --surface:#1D211F; --surface-2:#252A28; --line:#323936; --line-2:#46504B;
+  --fg:#EEF1EF; --fg-2:#C4CBC7; --fg-3:#9FA9A3;
+  --green:#2BD27A; --green-ink:#40E88D; --green-soft:#0F2B1D;
+  --red:#FF6A6E; --red-ink:#FF8E91; --red-soft:#3A1416;
+  --gold:#E2B575; --gold-soft:#33281A;
+  --orange:#FC9F3B; --orange-soft:#3A2410;
+  --violet:#C892E0; --violet-soft:#2E1C36;
+  --shadow:0 4px 14px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141716; --surface:#1D211F; --surface-2:#252A28; --line:#323936; --line-2:#46504B;
+  --fg:#EEF1EF; --fg-2:#C4CBC7; --fg-3:#9FA9A3;
+  --green:#2BD27A; --green-ink:#40E88D; --green-soft:#0F2B1D;
+  --red:#FF6A6E; --red-ink:#FF8E91; --red-soft:#3A1416;
+  --gold:#E2B575; --gold-soft:#33281A;
+  --orange:#FC9F3B; --orange-soft:#3A2410;
+  --violet:#C892E0; --violet-soft:#2E1C36;
+  --shadow:0 4px 14px rgba(0,0,0,.35); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+@media (max-width:900px){html{scroll-padding-top:72px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-body);margin:0}
+a{color:var(--green-ink)} a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+h1,h2,h3,h4{text-wrap:balance;margin:0;line-height:1.25}
+h2{font-size:26px;font-weight:800;letter-spacing:-.3px}
+h3{font-size:18px;font-weight:700}
+h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--fg-3)}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+code{background:var(--surface-2);padding:1px 5px;border-radius:4px}
+
+.shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;max-width:1320px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 80px}
+@media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr);gap:20px}}
+
+/* index */
+.index{position:sticky;top:max(16px,env(safe-area-inset-top,0px));align-self:start;max-height:calc(100vh - 32px);overflow:auto;
+  background:var(--green-soft);border-radius:16px;padding:18px 12px}
+.index .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;padding:0 8px 12px}
+.index .dot{width:10px;height:10px;border-radius:50%;background:var(--red)}
+.index nav a{display:block;padding:6px 10px;border-radius:8px;color:var(--fg-2);text-decoration:none;font-size:14px}
+.index nav a:hover{background:var(--surface);color:var(--fg)}
+.index nav .grp{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--fg-3);padding:12px 10px 4px}
+.menu-btn{display:none}
+.index .brand>span:first-child{display:flex;align-items:center;gap:8px}
+@media (max-width:900px){
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--green-soft)}
+  .shell{padding-block:0 64px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;max-height:none;overflow:visible;border-radius:0 0 14px 14px;padding:10px 12px;margin:0 calc(-1 * max(16px, env(safe-area-inset-left,0px))) 0;box-shadow:var(--shadow)}
+  .index .brand{padding:0 4px;justify-content:space-between;font-size:15px}
+  .index .brand>span:first-child{display:flex;align-items:center;gap:8px}
+  .menu-btn{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--green);color:#fff;border-radius:999px;padding:7px 14px;font:700 13px var(--f-body);cursor:pointer}
+  .index nav{display:none;max-height:calc(100vh - 90px);overflow:auto;padding-top:8px}
+  .index.open nav{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}
+  .index nav .grp{grid-column:1/-1}
+  .index nav a{padding:8px 10px;background:var(--surface);font-size:13.5px}
+}
+
+
+main{min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:18px}
+.lede{font-size:16px;color:var(--fg-2);max-width:70ch}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--green-ink)}
+
+/* hero */
+.hero{background:var(--surface);border-radius:20px;padding:32px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px}
+.hero h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px}
+.hero h1 span{color:var(--green)}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:var(--surface-2);border-radius:12px;padding:10px 14px;flex:1 1 150px}
+.stat b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--fg-3)}
+.meta{font-size:12.5px;color:var(--fg-3)}
+
+/* big picture */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.flow{grid-template-columns:minmax(0,1fr)}}
+.nav26{columns:3 200px;column-gap:24px;margin:0;padding-left:22px;font-size:14px;color:var(--fg-2)}
+.nav26 li{break-inside:avoid;padding:2px 0}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;position:relative}
+.stage .n{font-size:11px;font-weight:800;color:var(--fg-3);letter-spacing:.6px}
+.stage h3{font-size:16px}
+.stage p{font-size:13px;color:var(--fg-2)}
+.stage .chips{margin-top:auto}
+.stage.s1{border-top:4px solid var(--green)} .stage.s2{border-top:4px solid var(--gold)} .stage.s3{border-top:4px solid var(--orange)}
+.stage.s4{border-top:4px solid var(--red)} .stage.s5{border-top:4px solid var(--violet)} .stage.s6{border-top:4px solid var(--fg-3)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--fg-2);text-decoration:none;max-width:100%}
+a.chip:hover{background:var(--green-soft);color:var(--green-ink)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.p-green{background:var(--green-soft);color:var(--green-ink)} .p-red{background:var(--red-soft);color:var(--red-ink)}
+.p-orange{background:var(--orange-soft);color:var(--orange)} .p-grey{background:var(--surface-2);color:var(--fg-2)}
+.p-gold{background:var(--gold-soft);color:var(--gold)} .p-violet{background:var(--violet-soft);color:var(--violet)}
+
+/* concept grid */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.grid2.two{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+@media (max-width:700px){.grid2.two{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--surface);border-radius:14px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;min-width:0}
+.box ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--fg-2)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.kv dt{font-weight:700} .kv dd{margin:0;color:var(--fg-2)}
+
+/* diagrams */
+.steps{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.step{flex:1 1 140px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px;color:var(--fg-2);position:relative}
+.step b{display:block;color:var(--fg);font-size:14px;margin-bottom:2px}
+.arrow{align-self:center;color:var(--fg-3);font-weight:800}
+@media (max-width:640px){.arrow{display:none}}
+.states{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px}
+
+/* table */
+.tbl{overflow-x:auto;background:var(--surface);border-radius:14px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--surface-2);font-weight:700;color:var(--fg);font-size:12.5px;text-transform:uppercase;letter-spacing:.4px}
+tr:last-child td{border-bottom:0}
+td .yes{color:var(--green-ink);font-weight:700} td .no{color:var(--fg-3)}
+
+/* module directory */
+.filterbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+.filterbar input{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 12px;font:inherit}
+.filterbar button{border:1px solid var(--line);background:var(--surface);color:var(--fg-2);border-radius:999px;padding:6px 12px;font:600 13px var(--f-body);cursor:pointer}
+.filterbar button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.domain{display:flex;flex-direction:column;gap:12px}
+.domain>h3{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;padding-top:8px}
+.domain>h3 .bar{width:6px;height:22px;border-radius:3px}
+.domain>p{color:var(--fg-2);font-size:14px;max-width:70ch}
+.mod{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.mod>summary{list-style:none;cursor:pointer;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:start}
+.mod>summary::-webkit-details-marker{display:none}
+.mod .t{font-size:17px;font-weight:800}
+.mod .what{grid-column:1/-1;color:var(--fg-2);font-size:14px;max-width:80ch}
+.mod .tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.mod .tags{grid-row:1;grid-column:2}
+.mod>summary::after{content:"Show details ▾";grid-column:1/-1;font-size:12.5px;font-weight:700;color:var(--green-ink)}
+.mod[open]>summary::after{content:"Hide details ▴"}
+.mod .body{padding:16px 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;border-top:1px solid var(--line)}
+@media (max-width:700px){.mod .body{grid-template-columns:minmax(0,1fr)}}
+.mod .body>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mod .body ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--fg-2);display:flex;flex-direction:column;gap:3px}
+.mod .body .wide{grid-column:1/-1}
+.mod .issues li{color:var(--red-ink)}
+.mod .figma{font-size:12px;color:var(--fg-3)}
+@media (max-width:560px){.mod>summary{grid-template-columns:1fr}.mod .tags{grid-row:auto;grid-column:1;justify-content:flex-start}}
+
+/* design system */
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.swatches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sw{border-radius:12px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);font-size:12px}
+.sw i{display:block;height:56px}
+.sw div{padding:8px 10px;display:flex;flex-direction:column}
+.sw b{font-size:12.5px}
+.ramp{display:flex;border-radius:10px;overflow:hidden;height:34px}
+.ramp i{flex:1}
+.typescale{display:flex;flex-direction:column;gap:0;background:var(--surface);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.typescale div{display:grid;grid-template-columns:170px 1fr;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);align-items:baseline}
+.typescale div:last-child{border-bottom:0}
+.typescale small{color:var(--fg-3);font-family:var(--f-mono);font-size:11.5px}
+@media (max-width:560px){.typescale div{grid-template-columns:1fr}}
+.mock{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:90px 1fr;grid-template-rows:auto 1fr;gap:8px;min-height:240px;font-size:11px;color:var(--fg-3)}
+.mock .hd{grid-column:1/-1;background:var(--surface);border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between}
+.mock .sb{background:var(--green-soft);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.mock .sb i{display:block;height:7px;border-radius:4px;background:var(--line-2)} .mock .sb i.on{background:var(--green)}
+.mock .ct{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mock .row{background:var(--surface);border-radius:8px;padding:7px 10px;display:flex;justify-content:space-between;gap:8px}
+.mock .tb{background:var(--surface);border-radius:8px;flex:1;display:flex;flex-direction:column}
+.mock .tb span{padding:5px 10px;border-bottom:1px solid var(--line)}
+.mock .tb span:first-child{background:var(--surface-2);font-weight:700}
+.mock .btn{background:var(--green);color:#fff;border-radius:999px;padding:0 8px;font-weight:700}
+.callout{border-left:4px solid var(--gold);background:var(--gold-soft);border-radius:0 12px 12px 0;padding:12px 16px;font-size:14px;color:var(--fg)}
+.callout.red{border-color:var(--red);background:var(--red-soft)}
+.callout.green{border-color:var(--green);background:var(--green-soft)}
+.toolbar{display:flex;justify-content:flex-end;gap:8px}
+.toolbar button{border:1px solid var(--line);background:var(--surface);color:var(--fg-2);border-radius:999px;padding:6px 12px;font:600 13px var(--f-body);cursor:pointer}
+.empty{display:none;padding:20px;text-align:center;color:var(--fg-3);background:var(--surface);border-radius:14px}
+footer{font-size:12.5px;color:var(--fg-3);border-top:1px solid var(--line);padding-top:18px}
+@media (max-width:640px){
+  body{font-size:14.5px}
+  h2{font-size:22px}
+  main{gap:44px}
+  .hero{padding:20px;border-radius:16px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .stat{padding:10px 12px}
+  .stat b{font-size:20px}
+  .stat:last-child:nth-child(odd){grid-column:1/-1}
+  .box{padding:16px}
+  .mod>summary{padding:14px}
+  .mod .body{padding:14px}
+  .filterbar input{flex-basis:100%}
+  .toolbar{justify-content:flex-start}
+  /* tables become stacked cards */
+  .tbl{background:transparent;box-shadow:none;overflow:visible}
+  .tbl table{min-width:0}
+  .tbl thead{display:none}
+  .tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl tr{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px;margin-bottom:10px}
+  .tbl td{border:0;padding:4px 0;display:grid;grid-template-columns:42% 1fr;gap:10px}
+  .tbl td::before{content:attr(data-label);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--fg-3)}
+  .tbl td:first-child{font-weight:700;font-size:15px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:4px}
+  .tbl td[data-label=""]{grid-template-columns:1fr}
+  .tbl td:empty{display:none}
+  .tbl td>*{justify-self:start}
+  .mock{grid-template-columns:56px 1fr}
+}
+</style>
+
+<div class="shell">
+<aside class="index" aria-label="Contents">
+  <div class="brand"><span><span class="dot" aria-hidden="true"></span>myFortis Agent Portal</span><button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="toc">☰ Contents</button></div>
+  <nav id="toc">
+    <div class="grp">Start here</div>
+    <a href="#overview">What the product is</a>
+    <a href="#bigpicture">How it fits together</a>
+    <a href="#concepts">Key concepts</a>
+    <a href="#patterns">Patterns used everywhere</a>
+    <div class="grp">Modules</div>
+    <a href="#d-access">Access &amp; admin</a>
+    <a href="#d-network">Hospitals &amp; commercials</a>
+    <a href="#d-catalogue">What can be booked</a>
+    <a href="#d-supply">When it can be booked</a>
+    <a href="#d-ops">Front-office operations</a>
+    <a href="#d-engage">Content &amp; notifications</a>
+    <a href="#d-control">Reports, audit &amp; support</a>
+    <div class="grp">Reference</div>
+    <a href="#matrix">Module matrix</a>
+    <a href="#design">Design system</a>
+    <a href="#issues">Gaps &amp; open questions</a>
+    <a href="#figma">Figma map</a>
+  </nav>
+</aside>
+
+<main>
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" class="hero">
+  <div class="eyebrow">Product reference · Approved designs</div>
+  <h1>myFortis <span>Agent Portal</span></h1>
+  <p class="lede">The Agent Portal is Fortis Healthcare's internal back office. Staff use it to set up everything a patient sees in the myFortis app and website: hospitals, doctors, specialities, tests, health-check packages, prices, slots, coupons and corporate tie-ups. Call-centre and hospital agents also use it to register patients, book on their behalf, and manage appointments, orders and refunds.</p>
+  <div class="stats">
+    <div class="stat"><b>26</b><span>sidebar menu items</span></div>
+    <div class="stat"><b>~30</b><span>module sections in Figma</span></div>
+    <div class="stat"><b>3</b><span>service lines: Doctor, PHC, Modality</span></div>
+    <div class="stat"><b>3</b><span>role levels: Corporate, Regional, Unit</span></div>
+    <div class="stat"><b>2</b><span>brands: Fortis, GlenEagles</span></div>
+  </div>
+  <p class="meta">Source: Figma "myFortis Agent Portal", page "✅ myFortis Agent Portal (Approved)". Desktop web app, designed at 1512 × 982. Final version, audited 12 Nov 2026. Notes marked <em>(inferred)</em> are readings of the design to confirm with the business.</p>
+</section>
+
+<!-- ============ BIG PICTURE ============ -->
+<section id="bigpicture">
+  <div class="eyebrow">The big picture</div>
+  <h2>How it fits together</h2>
+  <p class="lede">Every module does one of six jobs. Read left to right: set up what can be booked, open slots, set prices and offers, run day-to-day bookings, handle money, and keep control.</p>
+  <div class="flow">
+    <div class="stage s1"><span class="n">1 · CATALOGUE &amp; CONTENT</span><h3>What patients see</h3><p>Doctors, specialities, search keywords, test categories, services and health-check packages, plus banners, blogs, videos and push campaigns.</p>
+      <div class="chips"><a class="chip" href="#m-doctors">Doctors</a><a class="chip" href="#m-speciality">Speciality</a><a class="chip" href="#m-keyword">Keyword</a><a class="chip" href="#m-servcat">Service Categories</a><a class="chip" href="#m-servconf">Service Config</a><a class="chip" href="#m-phcinfo">PHC Info</a><a class="chip" href="#m-phccat">PHC Category</a><a class="chip" href="#m-content">Content</a></div></div>
+    <div class="stage s2"><span class="n">2 · SUPPLY</span><h3>When it can be booked</h3><p>Weekly templates, then a per-date calendar to block, open or add one-off slots.</p>
+      <div class="chips"><a class="chip" href="#m-dochls">Doctor schedule</a><a class="chip" href="#m-docll">Doctor low-level</a><a class="chip" href="#m-catsched">Category schedule</a><a class="chip" href="#m-phcsched">PHC schedule</a></div></div>
+    <div class="stage s3"><span class="n">3 · COMMERCIALS</span><h3>Where and at what price</h3><p>Hospital rules, corporate payors, coupons and payment gateways.</p>
+      <div class="chips"><a class="chip" href="#m-hospitals">Hospitals</a><a class="chip" href="#m-payor">Payor</a><a class="chip" href="#m-coupons">Coupons</a><a class="chip" href="#m-payment">Payment Gateway</a></div></div>
+    <div class="stage s4"><span class="n">4 · OPERATIONS</span><h3>Bookings, every day</h3><p>Find or register patients, book for them, and manage appointments and orders.</p>
+      <div class="chips"><a class="chip" href="#m-patients">Patients</a><a class="chip" href="#m-appointments">Appointments</a><a class="chip" href="#m-orders">Orders</a></div></div>
+    <div class="stage s5"><span class="n">5 · MONEY</span><h3>Payments &amp; refunds</h3><p>Payment links, refund tracking, and HIS sync failures.</p>
+      <div class="chips"><a class="chip" href="#m-refunds">Refunds</a><a class="chip" href="#m-prayas">Support Services</a></div></div>
+    <div class="stage s6"><span class="n">6 · CONTROL</span><h3>Access, insight &amp; audit</h3><p>Who can do what, configurable reports, and a full change log.</p>
+      <div class="chips"><a class="chip" href="#m-users">Users</a><a class="chip" href="#m-roles">Roles</a><a class="chip" href="#m-reports">Reports</a><a class="chip" href="#m-audit">Audit Trail</a><a class="chip" href="#m-notification">Notifications</a></div></div>
+  </div>
+  <div class="callout green"><b>Where data comes from.</b> Prices, service masters, package codes and tariffs come from <b>HIS</b>, the hospital information system. In the portal those fields are locked; staff add patient-facing content, eligibility and visibility on top. <em>(inferred from locked fields and the Support Services console)</em></div>
+</section>
+
+<!-- ============ CONCEPTS ============ -->
+<section id="concepts">
+  <div class="eyebrow">Vocabulary</div>
+  <h2>Key concepts</h2>
+  <div class="grid2 two">
+    <div class="box"><h3>Three service lines</h3>
+      <dl class="kv"><dt>Doctor / OPD</dt><dd>Consultations, either a Hospital Visit or a Tele/Video Consult.</dd>
+      <dt>PHC</dt><dd>Preventive Health Check-up packages, e.g. "HCU Package Emp above 50 Male".</dd>
+      <dt>Modality</dt><dd>Radiology and lab tests (MRI, CT, X-Ray, Thyroid Profile). Booked as a multi-test order.</dd></dl></div>
+    <div class="box"><h3>Two ways to pay</h3>
+      <dl class="kv"><dt>Prepaid</dt><dd>"Pay Now". In the portal, the agent <b>sends a payment link</b> to the patient.</dd>
+      <dt>Postpaid</dt><dd>"Pay on Arrival" / Pay Later / Pay at Hospital. The booking is confirmed straight away.</dd></dl>
+      <p style="font-size:13px;color:var(--fg-3)">Many rules are set separately for each: cancel/reschedule windows, coupon eligibility, and per-slot payment for some doctors.</p></div>
+    <div class="box"><h3>Three role levels</h3>
+      <dl class="kv"><dt>Corporate</dt><dd>Pan-India, all units.</dd><dt>Regional</dt><dd>A group of units, e.g. North.</dd><dt>Unit</dt><dd>One hospital.</dd></dl>
+      <p style="font-size:13px;color:var(--fg-3)">Roles seen: Corporate Admin, Corporate IT, Unit IT, Corporate / Regional / Unit Marketing, Corporate Finance, FD/ZD, Unit Call Center.</p></div>
+    <div class="box"><h3>Glossary</h3>
+      <dl class="kv"><dt>UHID</dt><dd>Patient's unique health ID</dd><dt>GID</dt><dd>Employee or doctor ID</dd><dt>HIS</dt><dd>Hospital Information System, the source of masters and billing</dd><dt>Unit</dt><dd>An individual hospital</dd><dt>Payor</dt><dd>A corporate client with employee benefits</dd><dt>Star Doctor</dt><dd>A premium doctor tier</dd><dt>Business Object</dt><dd>A data permission such as <code>MSREPORTS.ALL_APPOINTMENTS</code></dd><dt>FD/ZD</dt><dd>Facility / Zonal Director <em>(inferred)</em></dd><dt>HCU</dt><dd>Health Check-Up, the package names used in PHC</dd><dt>Ad-hoc slot</dt><dd>A one-off extra slot for a single week</dd></dl></div>
+  </div>
+  <div class="box"><h3>The sidebar: 26 items, in order</h3>
+    <ol class="nav26"><li><b>Dashboard</b> <em>(not designed on this page)</em></li><li><a href="#m-roles">Role Management</a></li><li><a href="#m-content">Content Management</a></li><li><a href="#m-doctors">Doctor</a></li><li><a href="#m-hospitals">Hospitals</a></li><li><a href="#m-appointments">Appointment</a></li><li><a href="#m-prayas">Prayas</a> → being renamed "Support Services"</li><li><a href="#m-coupons">Coupons</a></li><li><a href="#m-patients">Patients</a></li><li><a href="#m-dochls">Doctor Schedule</a></li><li><a href="#m-docll">Doctor Low-Level Schedule</a></li><li><a href="#m-phccat">PHC Package Category</a></li><li><a href="#m-phcinfo">PHC Information</a></li><li><a href="#m-phcsched">PHC Schedule</a></li><li><a href="#m-refunds">Refunds</a></li><li><a href="#m-reports">Reports</a></li><li><a href="#m-audit">Audit Trail</a></li><li><a href="#m-speciality">Speciality Management</a></li><li><a href="#m-keyword">Keyword</a></li><li><a href="#m-servcat">Service Categories</a></li><li><a href="#m-catsched">Category Schedule</a></li><li><a href="#m-catsched">Category Low Level Schedule</a></li><li><a href="#m-servconf">Service Configuration</a></li><li><a href="#m-orders">Orders</a></li><li><a href="#m-payor">Payor</a></li><li><a href="#m-payment">Payment Gateway</a></li></ol>
+    <p style="font-size:13px;color:var(--fg-3)">The list is flat, with no groups. Notifications have no menu item and open from the header bell. Some frames show "PHC Low-Level Schedule" as its own item. Which items a user sees presumably depends on their role.</p></div>
+</section>
+
+<!-- ============ PATTERNS ============ -->
+<section id="patterns">
+  <div class="eyebrow">Learn once, read everywhere</div>
+  <h2>Patterns used everywhere</h2>
+  <p class="lede">Most screens are built from five patterns. Once you know them, a new module reads quickly, and any new feature should reuse them.</p>
+
+  <div class="grid2">
+    <div class="box"><h3>① List page</h3>
+      <div class="mock" aria-hidden="true">
+        <div class="hd"><span>Fortis logo</span><span>🔔 Vivek Singh · Corporate Team</span></div>
+        <div class="sb"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="ct"><div class="row"><b>Page title</b><span class="btn">Create</span></div>
+          <div class="row"><span>🔍 Search by …</span><span>✕ Clear · Filter ▾ · Filter ▾</span></div>
+          <div class="tb"><span>ID · Name · … · Status · Actions</span><span>row · 👁 ✎</span><span>row · 👁 ✎</span><span>Page 1 of 35 · Items per page 10</span></div></div>
+      </div>
+      <ul><li>A title and a <b>Create</b> button (missing where records come from HIS)</li><li>Search with a scoped placeholder, filter dropdowns and a red ✕ Clear</li><li>A table with sortable headers and status pills; multi-value cells show "+8 more"</li><li>Some lists add a "View More Columns" side tab, which is a column chooser</li></ul></div>
+
+    <div class="box"><h3>② Create / Edit / View</h3>
+      <ul><li>The same layout is used three ways; View adds an <b>Edit</b> button at the top right</li>
+      <li>Fields are grouped in collapsible cards, two columns wide</li>
+      <li>Required fields are marked with a red *. Placeholders read "Enter" or "Select"</li>
+      <li>Footer buttons: <b>Reset</b> on the left; <b>Cancel</b> and <b>Submit / Save / Send for Approval</b> on the right</li>
+      <li>Fields that come from HIS (code, name, price, hospital) are greyed out and locked</li>
+      <li>Every action ends in a toast ("…created successfully!") or a confirm modal ("You are about to … Please confirm")</li></ul></div>
+  </div>
+
+  <div class="box"><h3>③ Approval (maker-checker)</h3>
+    <p style="color:var(--fg-2);font-size:14px">Changes to doctors, specialities, service categories and configuration, PHC info and schedules, coupons and doctor schedules need a second person to approve them before they go live.</p>
+    <div class="steps">
+      <div class="step"><b>Maker edits</b>Fills the form and clicks Send for Approval</div><span class="arrow">→</span>
+      <div class="step"><b><span class="pill p-orange">Pending Approval</span></b>The record is locked, and Edit is greyed out on the list</div><span class="arrow">→</span>
+      <div class="step"><b>Checker reviews</b>Opens View, sees Preview and the Audit Trail, and writes a Review Comment</div><span class="arrow">→</span>
+      <div class="step"><b><span class="pill p-green">Approved</span> or <span class="pill p-grey">Sent Back</span></b>Approved goes live. Sent Back returns to the maker to fix</div>
+    </div>
+    <p style="font-size:13px;color:var(--fg-3)">Every approval-enabled record shows an Audit Trail table: Date &amp; Time · Approval Status · Status · Action By · Comments.</p></div>
+
+  <div class="grid2">
+    <div class="box"><h3>④ Two-layer schedules</h3>
+      <div class="steps">
+        <div class="step"><b>High-level (template)</b>Day × time windows and slot length. Runs until a date (Doctor, PHC) or for a number of weeks, max 8 (Category). Needs approval.</div><span class="arrow">→</span>
+        <div class="step"><b>Low-level (calendar)</b>Per-date grid. Set each slot to Both / Hospital Visit / Tele / Blocked, apply to recurring weeks, add ad-hoc slots.</div>
+      </div>
+      <div class="states"><span class="pill p-green">Available</span><span class="pill p-red">Booked (changes may conflict)</span><span class="pill p-grey">Blocked</span><span class="pill p-gold">Ad-hoc (this week only)</span></div>
+      <p style="font-size:13px;color:var(--fg-3)">The same model is used for Doctors, Service Categories and PHC packages. Design a schedule feature once and it applies to all three.</p></div>
+
+    <div class="box"><h3>⑤ Booking on behalf of a patient</h3>
+      <div class="steps">
+        <div class="step"><b>1 · Hospital</b>Pick a unit</div>
+        <div class="step"><b>2 · Catalogue</b>Speciality → doctor, a package, or a test cart</div>
+        <div class="step"><b>3 · Slot</b>Date strip, then Morning / Afternoon chips</div>
+        <div class="step"><b>4 · Summary</b>Patient, remarks, price, discounts and coupon</div>
+        <div class="step"><b>5 · Pay</b>Send Payment Link, or Confirm Booking for Pay on Arrival</div>
+      </div>
+      <p style="font-size:13px;color:var(--fg-3)">Discounts stack: registration fee waived for online payment, plus corporate discount, plus coupon.</p></div>
+  </div>
+</section>
+
+<!-- ============ MODULES ============ -->
+<section id="modules">
+  <div class="eyebrow">Module by module</div>
+  <h2>Modules</h2>
+  <p class="lede">Each card gives the one-line purpose and its badges. Open a card for screens, fields, rules and issues. Search by any word, for example "coupon", "OTP" or "refund".</p>
+  <div class="filterbar" role="search">
+    <input id="q" type="search" placeholder="Search modules, fields or rules…" aria-label="Search modules">
+    <button type="button" data-f="all" aria-pressed="true">All</button>
+    <button type="button" data-f="approval" aria-pressed="false">Needs approval</button>
+    <button type="button" data-f="booking" aria-pressed="false">Patient-facing impact</button>
+  </div>
+  <div class="toolbar"><button type="button" id="expand">Expand all</button><button type="button" id="collapse">Collapse all</button></div>
+  <p class="empty" id="empty">No module matches that search.</p>
+
+  <!-- ACCESS -->
+  <div class="domain" id="d-access"><h3><span class="bar" style="background:var(--fg-3)"></span>Access &amp; admin</h3>
+  <p>Who can log in and what they can see and do.</p>
+
+  <details class="mod" id="m-login" data-tags="">
+    <summary><span class="t">Login</span><span class="tags"><span class="pill p-grey">1 screen</span></span>
+      <span class="what">"Welcome to myFortis Agent Portal" with one <b>Login with SSO</b> button. There's no password or forgot-password flow.</span></summary>
+    <div class="body"><div><h4>Rules</h4><ul><li>Identity comes from Fortis SSO</li><li>Only users with a Fortis email ID can be created (see Users)</li></ul></div></div>
+  </details>
+
+  <details class="mod" id="m-users" data-tags="">
+    <summary><span class="t">Users</span><span class="tags"><span class="pill p-grey">Role Management › Users</span></span>
+      <span class="what">Create and manage the staff accounts that can use the portal. Each user gets a role, hospital units and, optionally, a mapped doctor.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: User ID, Name, Role, Email ID, Status, Actions</li><li>Search and a Status filter</li></ul></div>
+      <div><h4>Create / Edit</h4><ul><li><b>Personal:</b> Title, First*, Middle, Last, GID, Email (a Fortis email is required), Login ID</li><li><b>Role:</b> User Role, Hospitals (multi-select), Mapped Doctor (search by Name/GID, or NA)</li></ul></div>
+      <div><h4>View</h4><ul><li>Full Name, Mobile, Created on, Reporting Manager, Mapped to Role, Hospital Units ("16 units"), GID, Mapped ID</li></ul></div>
+      <div><h4>Actions &amp; feedback</h4><ul><li>Deactivate opens a confirm modal; there's no hard delete</li><li>Toasts: "User created successfully!" / "User creation failed!"</li></ul></div>
+      <p class="figma wide">Figma: Users <code>23163:56936</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-roles" data-tags="">
+    <summary><span class="t">Roles</span><span class="tags"><span class="pill p-grey">Role Management › Roles</span><span class="pill p-violet">AGP update</span></span>
+      <span class="what">A role is a bundle of <b>Responsibilities</b> (feature permissions) and <b>Business Objects</b> (data permissions), scoped Corporate, Regional or Unit.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: Role ID, Role Name, Role Type, Responsibilities (+n more), Business Objects (+n more), Status</li><li>Filters: Role Type, Status</li></ul></div>
+      <div><h4>Create / Edit</h4><ul><li>Role Name, Role Type</li><li>Responsibilities: checklist with Select All, e.g. View/Create/Edit User Role, Agent User, Reports, Upload Report for PHC, Edit Coupons Pan-India vs Unit</li><li>Access to Business Objects: multi-select, e.g. <code>MSBOOKANDPAY.ALL_BOOKING_DETAILS</code></li><li><b>Doctor Mapping Required</b> (Yes/No). If Yes, <b>Doctor Type</b> (Regular / Star) appears. This is the new AGP field</li></ul></div>
+      <div class="wide callout">Every new feature needs (a) new Responsibility entries, (b) a Business Object decision, and (c) unit scoping.</div>
+      <p class="figma wide">Figma: Roles <code>23163:54661</code> · AGP Updated designs <code>37038:294655</code></p>
+    </div>
+  </details>
+  </div>
+
+  <!-- NETWORK -->
+  <div class="domain" id="d-network"><h3><span class="bar" style="background:var(--orange)"></span>Hospitals &amp; commercials</h3>
+  <p>Where services are offered, what policies apply, and who gets discounts.</p>
+
+  <details class="mod" id="m-hospitals" data-tags="booking">
+    <summary><span class="t">Hospitals &amp; Hospital Type</span><span class="tags"><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The master record for each unit and its <b>policy layer</b>: brand, fees, contacts, and the 12 cancel/reschedule window rules.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: Hospital Code, Name, Short Name, State, City, Status</li><li>Filters: State, City, Status</li></ul></div>
+      <div><h4>Configuration</h4><ul><li><b>Hospital Type: Fortis / GlenEagles.</b> This drives the brand logos (App 40×40, Web 113×40)</li><li>Display/Short Name, Billing Code, Status</li><li>Self Doctor GID, PHC Doctor GID</li><li>Offline Registration Fees, Online Registration Discount</li><li>UFC/FD Approval, Refund Workflow Status</li></ul></div>
+      <div><h4>Contact</h4><ul><li>Address, Country, State, Region, City, Area, PIN</li><li>Latitude/Longitude, Emergency No., Call Center No.</li></ul></div>
+      <div><h4>Appointment windows (minutes)</h4><ul><li>{Reschedule, Cancel} × {Prepaid, Postpaid} × {Doctor, PHC, Modality} = 12 values, e.g. 15 mins</li><li>Applicable Offers: the coupon codes active at the unit</li></ul></div>
+      <ul class="issues wide"><li>Edit says "Window" but View says "Acceptance Range"; one icon spec is 25×25 and another is 40×40</li></ul>
+      <p class="figma wide">Figma: Hospitals <code>23163:52078</code> · Hospital Type <code>37354:297994</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-payor" data-tags="booking">
+    <summary><span class="t">Payor</span><span class="tags"><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">Corporate tie-ups (ICICI, TATA Power, Airtel…). Employees and their eligible dependants get discounts at mapped hospital sites.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: Payor Code, Name, Payor Type (Pvt Corps), Valid From/To, Last Updated, Status</li></ul></div>
+      <div><h4>Edit</h4><ul><li>Affiliated email domains as chips, e.g. <code>pwc.com</code></li><li>Eligible dependants: parents, spouse, children, siblings, in-laws</li><li>Relationship Manager name and contact</li><li>Benefit heads with discounts, e.g. OPD 40%, IPD 50%</li><li>Payor Sites table: site code → hospital, with an applicable from/to date</li></ul></div>
+      <div><h4>Links to</h4><ul><li>A patient becomes a "Corporate Profile" via OTP on their corporate email (see Patients). The corporate discount then applies at checkout</li></ul></div>
+      <p class="figma wide">Figma: Payor <code>23163:58419</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-coupons" data-tags="approval booking">
+    <summary><span class="t">Coupons</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The most rule-heavy module: discount coupons with detailed targeting by user, demographics, hospital, service, platform and payment mode.</span></summary>
+    <div class="body">
+      <div><h4>Discount</h4><ul><li>Code, Type (Percentage / Fixed), Value, Max Limit (₹)</li><li>Validity (start–end)</li><li>Description, which patients can see</li></ul></div>
+      <div><h4>Who and where</h4><ul><li>All users / specific UHIDs / specific mobile numbers</li><li>Nationality, Gender, Age range</li><li>Hospitals (multi-select)</li><li>Service: OPD (→ Speciality → Doctor) / PHC / Modality</li></ul></div>
+      <div><h4>How</h4><ul><li>Payment mode: Pay Now / Pay on Arrival</li><li>Platform: Patient Web / Patient App / Agent Portal</li><li>Visibility; reusability and reuse count</li></ul></div>
+      <div><h4>List</h4><ul><li>Columns: Coupon ID, Name, Value, Start/End, Approval Status, Status</li><li>Filters: Hospital, Approval Status</li><li>Editing rights are split: Pan-India vs Unit level</li></ul></div>
+      <p class="figma wide">Figma: Coupons <code>26939:258945</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-payment" data-tags="booking">
+    <summary><span class="t">Payment Gateway</span><span class="tags"><span class="pill p-orange">Patient-facing</span><span class="pill p-violet">Newer design</span></span>
+      <span class="what">Manages several online gateways (PayU, HSBC, Razorpay, Juspay). A gateway turns itself off when its success rate drops, and admins enable gateways per hospital.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: Payment Mode, Status (<span class="pill p-green">Active</span> / <span class="pill p-red">Temporarily Deactivated</span>), Success Rate ("96% of 312 attempts"), Hospitals configured (+39 more)</li><li>An alert banner with "Turn back on" and a confirm popup</li><li>"Add Payment Mode" button (flow not designed)</li></ul></div>
+      <div><h4>Configuration</h4><ul><li>Gateway name, logo, type, <b>payment link expiry</b> (30 mins), status</li><li>Health bar with markers: alert at 60%, auto turn-off at 40%</li><li>Rules: Turns off below 40% · Check every 15 mins · Over the last 60 mins</li><li>A checkbox per hospital to turn the gateway on or off</li><li>Audit Trail with comments</li></ul></div>
+      <div><h4>Rules</h4><ul><li>A gateway that turned itself off stays off until someone turns it back on</li><li>Patients only see the gateways that are active</li></ul></div>
+      <ul class="issues"><li>The banner names Razorpay but describes HSBC failing; the percentages don't match across banner, popup and table</li><li>"Justpay" vs "Juspay"</li></ul>
+      <p class="figma wide">Figma: Multi-payment gateway <code>38537:313760</code></p>
+    </div>
+  </details>
+  </div>
+
+  <!-- CATALOGUE -->
+  <div class="domain" id="d-catalogue"><h3><span class="bar" style="background:var(--green)"></span>What can be booked</h3>
+  <p>The catalogue patients browse: doctors, specialities, services and packages, plus the keywords that power search.</p>
+
+  <details class="mod" id="m-doctors" data-tags="approval booking">
+    <summary><span class="t">Doctors</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The doctor master and the public profile shown in the app: specialities, bio, video, visibility, payment options and a fee grid.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: GID, Name, Hospital(s), Specialities, Approval Status, Last Updated, Status</li><li>Filters: Specialities, Approval Status, Profile Status</li></ul></div>
+      <div><h4>Profile &amp; controls</h4><ul><li>Designation, Department, HIS Specialities, Experience, Languages</li><li>Profile Visibility, e.g. "Both Customer and Agent Portal"</li><li>Payment Profile Applicability: <b>All Slots / Partial Slots</b>; Payment Options</li><li>Toggles: Hide Schedule, <b>Star Doctor</b>, Visiting Consultant</li></ul></div>
+      <div><h4>Content</h4><ul><li>Speciality and sub-speciality pairs, ordered by dragging (top = primary)</li><li>Bio, Education, Awards, Expertise, Memberships</li><li>Message video (MP4/AVI, under 20 MB)</li></ul></div>
+      <div><h4>Fees</h4><ul><li>Grid: Hospital Visit / Tele × Domestic / International × Standard / Follow-up, with Service Code and Fee</li><li>OPD Follow-up Validity and Post-discharge Validity (days)</li></ul></div>
+      <p class="figma wide">Figma: Doctors <code>23163:52976</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-speciality" data-tags="approval booking">
+    <summary><span class="t">Speciality Management</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The Speciality → Sub-speciality taxonomy, with an icon and search keywords for each pair.</span></summary>
+    <div class="body">
+      <div><h4>Fields</h4><ul><li>Speciality Type (New / Existing), Sub-speciality, Icon (25×25), Keywords (multi-select)</li><li>Level: Unit / Regional / Corporate <em>(inferred)</em></li></ul></div>
+      <div><h4>Rules</h4><ul><li>"View Mapped Doctors" shows e.g. 16 doctors</li><li>A pair <b>can't be made Inactive</b> while doctors are mapped to it</li></ul></div>
+      <p class="figma wide">Figma: Speciality Management <code>23163:55298</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-keyword" data-tags="booking">
+    <summary><span class="t">Keyword</span><span class="tags"><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The master list of search terms (Acupuncture, Acute Liver Failure…) that are attached to specialities and service categories.</span></summary>
+    <div class="body"><div><h4>Actions</h4><ul><li>Create, Edit, <b>Disable</b> (confirm), <b>Delete</b> (confirm)</li><li>Columns: Keyword, Last Updated, Status</li></ul></div><p class="figma wide">Figma: Keyword <code>23163:56286</code></p></div>
+  </details>
+
+  <details class="mod" id="m-servcat" data-tags="approval booking">
+    <summary><span class="t">Service Categories</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The taxonomy for non-doctor services: Category → Sub-category (e.g. Radiology → X-Ray), with an icon and keywords. It works the same way as specialities.</span></summary>
+    <div class="body"><div><h4>Fields</h4><ul><li>Category Type (New / Existing), Sub-category, Icon, Keywords</li><li>The list button is labelled "Create New Combination"</li></ul></div><p class="figma wide">Figma: Service Category <code>26643:185969</code></p></div>
+  </details>
+
+  <details class="mod" id="m-servconf" data-tags="approval booking">
+    <summary><span class="t">Service Configuration</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">No Create</span></span>
+      <span class="what">Enriches HIS services (e.g. Physiotherapy) with a patient-facing description, instructions and eligibility. Name, billing group and price stay locked.</span></summary>
+    <div class="body">
+      <div><h4>Fields</h4><ul><li>Locked: Service Name, Billing Group/Sub-group, Price</li><li>Editable: Category and Sub-category, Status</li><li>Description and Instructions (rich-text editor)</li><li>Age range, Gender, Payment Option, Service Visibility, Schedule visible to patients?</li></ul></div>
+      <div><h4>List</h4><ul><li>Columns: Name, Category, Sub-category, Approval, Status, Last Updated</li><li>Filters: Hospitals, Category, Approval Status</li><li>Column chooser available</li></ul></div>
+      <ul class="issues wide"><li>The label is "Service Instruction" in Edit but "Package Instructions" in View</li></ul>
+      <p class="figma wide">Figma: Service Configuration <code>30137:316145</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-phcinfo" data-tags="approval booking">
+    <summary><span class="t">PHC Information</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">No Create</span></span>
+      <span class="what">Health-check packages per hospital: description, instructions, test inclusions and medical-condition tags. Code, name and price come from the master.</span></summary>
+    <div class="body">
+      <div><h4>Fields</h4><ul><li>Locked: Package Code, Name, Price, Hospital</li><li>Package Type (Individual…), Category, Gender, Age range, Status</li><li>Inclusions (fixed chips) and Medical Conditions (removable chips); "+16 more" opens a modal with search</li></ul></div>
+      <div><h4>List</h4><ul><li>Columns: Code, Name, Category, Hospital, Approval, Last Updated</li><li>There's no Active/Inactive column</li></ul></div>
+      <ul class="issues wide"><li>The price is ₹1700 in View but ₹1999 in Edit; the approval card title "Approve Configuration" was copied from another module</li></ul>
+      <p class="figma wide">Figma: PHC information <code>30148:329739</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-phccat" data-tags="booking">
+    <summary><span class="t">PHC Package Category</span><span class="tags"><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">A simple list of package categories (Diabetes, Heart, General Health…), each with an icon. It feeds the category chips in PHC booking. Saves directly, with no approval.</span></summary>
+    <div class="body"><div><h4>Fields</h4><ul><li>Category Name, Icon (25×25), Status</li></ul></div><ul class="issues"><li>The icon field is labelled "Speciality Icon" (copied from Speciality Management)</li></ul><p class="figma wide">Figma: PHC Package Category <code>28336:319266</code></p></div>
+  </details>
+  </div>
+
+  <!-- SUPPLY -->
+  <div class="domain" id="d-supply"><h3><span class="bar" style="background:var(--gold)"></span>When it can be booked</h3>
+  <p>Schedules for all three service lines, using the two-layer model from <a href="#patterns">pattern ④</a>.</p>
+
+  <details class="mod" id="m-dochls" data-tags="approval booking">
+    <summary><span class="t">Doctor Schedule (high-level)</span><span class="tags"><span class="pill p-green">Approval</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The weekly consultation windows for each doctor, valid until a date. It's designed as 4 cases that combine payment applicability with how slot length is set.</span></summary>
+    <div class="body">
+      <div class="wide"><h4>The 4 cases</h4>
+        <div class="tbl"><table><thead><tr><th></th><th>Dynamic slots (length per window: 5/10/15/20 min)</th><th>Fixed slots (one length for all)</th></tr></thead>
+        <tbody><tr><td><b>All Slots</b> (payment option from the doctor profile)</td><td>Case 1</td><td>Case 2</td></tr>
+        <tr><td><b>Partial Slots</b> (payment chosen per window: Both / Pay Now / Pay Later)</td><td>Case 3</td><td>Case 4</td></tr></tbody></table></div></div>
+      <div><h4>Form</h4><ul><li>Basic Info is read-only, from the doctor profile; Schedule Status is Active/Inactive</li><li>Slot Duration Type, Duration, Schedule Available Till</li><li>Mon–Sun grid of windows with time pickers, + Add, Replicate (copy to other days) and Delete</li></ul></div>
+      <div><h4>Rules</h4><ul><li>Edit is locked while Pending Approval</li><li>Replicate overwrites the target days</li><li>There's no Create button on the list <em>(entry point to confirm)</em></li></ul></div>
+      <p class="figma wide">Figma: Doctor's High Level Schedule <code>24468:86784</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-docll" data-tags="booking">
+    <summary><span class="t">Doctor Low-Level Schedule</span><span class="tags"><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">A per-date weekly grid generated from the approved template. Set each slot to Both / Hospital Visit / Teleconsultation / Blocked, or add ad-hoc slots. Saves directly.</span></summary>
+    <div class="body">
+      <div><h4>Form</h4><ul><li>Week Starting From, "Apply this Schedule to: Recurring Weeks", Recurring Till</li><li>A "Mark all as" control on each day column</li><li>A confirm modal before Submit Schedule</li></ul></div>
+      <div><h4>Ad-hoc slots</h4><ul><li>Days, start–end time, and type</li><li>They apply to the displayed week only</li><li>Error if one overlaps a regular slot</li></ul></div>
+      <p class="figma wide">Figma: Doctor's Low Level Schedule <code>25039:88413</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-catsched" data-tags="approval booking">
+    <summary><span class="t">Category Schedule &amp; Low-Level</span><span class="tags"><span class="pill p-green">Approval (template)</span><span class="pill p-orange">Patient-facing</span></span>
+      <span class="what">The same two layers for service categories at a hospital (e.g. Radiology → Ultrasound).</span></summary>
+    <div class="body">
+      <div><h4>Template</h4><ul><li>Select Category, Sub-category and Hospital Units, then Continue</li><li>Slot duration, "Schedule For" up to <b>8 weeks</b></li><li>Day × slot grid with a mode per slot (Hospital Visit / Tele / Both), Replicate</li></ul></div>
+      <div><h4>Calendar</h4><ul><li>Available / Blocked / Booked cells, ad-hoc slots, "Mark all as"</li><li>A confirm modal shows the date range</li></ul></div>
+      <p class="figma wide">Figma: Categories Schedule <code>28369:224493</code> · Low-level <code>28369:224075</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-phcsched" data-tags="approval booking">
+    <summary><span class="t">PHC Schedule &amp; Low-Level</span><span class="tags"><span class="pill p-green">Approval (template)</span><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">No Create</span></span>
+      <span class="what">The same model per health-check package, with a <b>Max Daily Limit</b>. The calendar layer only offers Available / Blocked, with no ad-hoc slots.</span></summary>
+    <div class="body">
+      <div><h4>Template</h4><ul><li>Package info is locked</li><li>Slot duration, Schedule Available Till, Max Daily Limit, Status</li><li>Mon–Sun window grid</li></ul></div>
+      <ul class="issues"><li>The horizon is shown as a date in some frames and in weeks in others</li><li>The submit modal's end date is before its start date</li></ul>
+      <p class="figma wide">Figma: PHC Schedule <code>30054:290453</code> · PHC Low-Level <code>30137:324990</code></p>
+    </div>
+  </details>
+  </div>
+
+  <!-- OPERATIONS -->
+  <div class="domain" id="d-ops"><h3><span class="bar" style="background:var(--red)"></span>Front-office operations</h3>
+  <p>Daily work for call-centre and hospital agents.</p>
+
+  <details class="mod" id="m-patients" data-tags="booking">
+    <summary><span class="t">Patients</span><span class="tags"><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">Biggest module · 119 frames</span></span>
+      <span class="what">Find or register a patient, then book a doctor, a health check or tests on their behalf. It also covers corporate verification and merging duplicate profiles.</span></summary>
+    <div class="body">
+      <div><h4>Search &amp; register</h4><ul><li>Search by Name, Mobile or UHID; <b>3+ characters</b> needed</li><li>Mobile and email are masked in the list</li><li>Register: Hospital, then Personal, Address, Document and Additional cards, then a <b>Preview</b> step, then Submit</li><li>The Passport/Visa card unlocks only for foreign patients</li></ul></div>
+      <div><h4>Profile hub</h4><ul><li>Header with a "Corporate Profile" badge and Valid Upto date</li><li>Tiles: Book Doctor / Book PHC / Book Radiology &amp; Lab</li><li>6 tabs: Upcoming and Past Appointments, Past IP Admissions, Upcoming and Past Orders, Merge Requests</li><li>Row actions: View, Reschedule, Mark Arrived, Cancel</li></ul></div>
+      <div><h4>Corporate profile</h4><ul><li>An OTP goes to the corporate email: 6 digits, <b>3 attempts</b>, Resend</li><li>Revalidate when it expires</li></ul></div>
+      <div><h4>Merge profiles</h4><ul><li>Select duplicates and choose a Primary</li><li>A request is sent and stays <span class="pill p-orange">Pending</span> until someone approves it</li><li>The button is disabled while a request is pending</li></ul></div>
+      <div><h4>Book a doctor</h4><ul><li>Speciality → Specialist (filters: Availability, Language, Gender; "Next Available Slot" pill)</li><li>Doctor detail with a Hospital Visit | Video Consult toggle</li><li>Follow-up banner: "You may book a follow-up appointment valid until…"</li></ul></div>
+      <div><h4>Book a PHC package</h4><ul><li>Category chips, package cards (tests included, price, Popular ribbon)</li><li>Details page with instructions and slots</li><li>Coupon modal, then pay</li></ul></div>
+      <div><h4>Book radiology &amp; lab tests</h4><ul><li>A cart of lines: Category › Sub-category › Service, then a slot for each line</li><li>Add from the patient's Preferred List or the Unit's Popular List</li><li><b>Can't mix tests with different payment options</b> in one order</li><li>A warning appears if slots are more than 2 hours apart</li></ul></div>
+      <ul class="issues"><li>Totals don't add up in the PHC and doctor summaries</li><li>The Preview data contradicts the form</li><li>Typos: "Adress", "Apporved", "Comphrensive"</li></ul>
+      <p class="figma wide">Figma: Patient's Module <code>26708:292964</code> · Tests &amp; Services AGP redesign <code>37477:344389</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-appointments" data-tags="booking">
+    <summary><span class="t">Appointments</span><span class="tags"><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">No Create</span></span>
+      <span class="what">A tracking console for all Doctor and PHC bookings from every channel. From here agents mark arrival, reschedule, cancel with a reason, and send payment links.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>A date-scope button (Today / Tomorrow / Last 7 days / Custom); "Showing Upcoming for Today | Show All"</li><li>Search by Booking ID, Mobile, UHID, Name or Doctor</li><li>Filters: Hospitals, Booking Type, Appointment Status, Payment Status, Arrival Status</li><li>Column chooser; sticky Actions column</li></ul></div>
+      <div><h4>View page</h4><ul><li>Cards: Patient, Appointment Details (source, payor), Payment (bill, transaction, paid via), Refund, Remarks</li><li>The action buttons change with the state</li></ul></div>
+      <div class="wide"><h4>State matrix (applies to both Doctor and PHC)</h4>
+        <div class="tbl"><table><thead><tr><th>Case</th><th>Appointment</th><th>Payment</th><th>Refund</th><th>Actions available</th></tr></thead><tbody>
+        <tr><td>1</td><td><span class="pill p-red">Cancelled</span></td><td>Paid</td><td><span class="yes">Applicable</span></td><td>None (shows the refund card)</td></tr>
+        <tr><td>2</td><td><span class="pill p-green">Completed</span></td><td>Paid</td><td class="no">—</td><td>None</td></tr>
+        <tr><td>3</td><td><span class="pill p-grey">Missed</span></td><td>Paid</td><td class="no">—</td><td>Reschedule, Cancel</td></tr>
+        <tr><td>4</td><td><span class="pill p-green">Booked</span></td><td>Paid</td><td><span class="yes">If cancelled</span></td><td>Mark Arrival, Reschedule, Cancel</td></tr>
+        <tr><td>5</td><td><span class="pill p-green">Booked</span></td><td>Pay Later</td><td class="no">—</td><td>Send Payment Link, Mark Arrival, Reschedule, Cancel</td></tr>
+        <tr><td>6</td><td><span class="pill p-red">Cancelled</span></td><td>Pay Later</td><td class="no">—</td><td>None</td></tr>
+        <tr><td>7</td><td><span class="pill p-grey">Missed</span></td><td>Pay Later</td><td class="no">—</td><td>Reschedule, Cancel</td></tr>
+        </tbody></table></div></div>
+      <div><h4>Rules</h4><ul><li>Reschedule stays at the same hospital</li><li>Cancel reasons differ for Doctor and PHC; "Other" needs text</li><li>Refunds apply only to prepaid cancellations</li><li>The newest frames drop Start/Stop Consultation; after arrival, all actions are disabled</li></ul></div>
+      <ul class="issues"><li>The reschedule flow ends with a "cancelled" toast</li><li>Statuses Pending, Auto cancelled and Inactive aren't defined</li><li>The month label reads "July" over December dates</li></ul>
+      <p class="figma wide">Figma: Appointments <code>30265:337869</code> · Updated search <code>36784:330615</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-orders" data-tags="booking">
+    <summary><span class="t">Orders</span><span class="tags"><span class="pill p-orange">Patient-facing</span><span class="pill p-grey">No Create</span></span>
+      <span class="what">Radiology and lab test orders, which can hold several tests. Arrival, reschedule and cancel work <b>per test</b>, so one order can be partly cancelled and refunded. Reorder is available too.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Default view: "Showing Upcoming Orders for: Today | Show All", with a date-range button</li><li>Columns: Order ID, Patient, UHID, Category, Sub-category, Service (+N more popup)</li><li>Filters: Hospital, Category, Sub-category, Order Status; column chooser</li><li>Row actions: View, Reschedule, Cancel, Reorder</li></ul></div>
+      <div><h4>View order</h4><ul><li>Buttons: View Prescription/Report, Send Payment Link (Pay Later only), Mark Arrival, Reschedule, Cancel</li><li>Each line item shows a "Cancelled on" badge where relevant</li><li>Payment card and one Refund block per cancellation</li></ul></div>
+      <div><h4>Per-test modals</h4><ul><li><b>Cancel:</b> tick the tests to cancel</li><li><b>Mark Arrival:</b> tick tests; future-dated tests are disabled</li><li><b>Reschedule:</b> pick a slot, then confirm; this may leave a balance to pay</li><li>Report viewer modal</li></ul></div>
+      <div><h4>Use cases (6 × Already Paid, 6 × Pay Later)</h4><ul><li>Booked · Completed · Missed · Partially cancelled · Entirely cancelled (at different times) · Entirely cancelled (at once)</li><li>A refund applies only to prepaid cancellations</li><li>Refund statuses: Approved, Pending, Initiated, Declined, Refunded</li></ul></div>
+      <ul class="issues"><li>Two list layouts with different columns</li><li>"Order" and "Appointment" wording mixed on the same pages</li><li>Three Order ID formats</li><li>Pay Later cases 1 and 6 contradict the refund rules</li></ul>
+      <p class="figma wide">Figma: Orders <code>30948:288347</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-refunds" data-tags="">
+    <summary><span class="t">Refunds</span><span class="tags"><span class="pill p-grey">View-only</span></span>
+      <span class="what">Tracks refunds across Doctor, Health Package and Tests &amp; Services. Refunds are approved in <b>HIS</b>, not in the portal.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Date-range button; search by Order ID, UHID, HIS Request ID or Refund ID</li><li>Filters: Hospitals, Service Type, Approval Status</li><li>Columns: Order/Booking ID (sticky), Service Type, Refund ID, HIS Request ID, Transaction ID, Hospital</li></ul></div>
+      <div><h4>View</h4><ul><li>Patient, Order/Appointment and Payment cards (including Registration Fees)</li><li>Refund Details: HIS Request ID, <span class="pill p-green">HIS Approved</span> / <span class="pill p-red">HIS Rejected</span>, Refunded / Rejected, Maximum Refund Amount</li><li>Audit Trail</li></ul></div>
+      <ul class="issues"><li>Refund status words differ from the ones used in Orders</li><li>Typo: "Veiw More Columns"</li></ul>
+      <p class="figma wide">Figma: Refunds <code>32460:317214</code></p>
+    </div>
+  </details>
+  </div>
+
+  <!-- ENGAGEMENT -->
+  <div class="domain" id="d-engage"><h3><span class="bar" style="background:var(--violet)"></span>Content &amp; notifications</h3>
+  <p>What patients read in the app, and the alerts staff receive.</p>
+  <details class="mod" id="m-content" data-tags="approval booking">
+    <summary><span class="t">Content Management</span><span class="tags"><span class="pill p-orange">Patient-facing</span><span class="pill p-green">Approval (notifications)</span></span>
+      <span class="what">The content system for the patient app. One Create form changes with the <b>Content Type</b> chosen: Campaign Banner, Marketing Notification, Blog, Video or Curated Playlist.</span></summary>
+    <div class="body">
+      <div><h4>Landing list</h4><ul><li>Buttons: Create Content, <b>Reorder Campaign Banner</b></li><li>Filters: Content Type, Status</li><li>Columns: Type, Title, Status, Last Updated</li><li>Each type has its own list</li></ul></div>
+      <div><h4>Campaign Banner</h4><ul><li>Title, Start and End dates, Status</li><li>Redirection URL, Description, Hospitals</li><li>Image 1600×1200, max 1 MB</li><li>Drag to reorder; the position appears on the patient home screen</li></ul></div>
+      <div><h4>Blogs &amp; Videos</h4><ul><li>Author = Hospital + Category, then a doctor from the filtered list</li><li>Featured? (Yes/No), Keywords</li><li>Blog: 3 images (listing, detail, homepage) and a rich-text body</li><li>Video: YouTube link and a rich-text description</li></ul></div>
+      <div><h4>Curated Playlist</h4><ul><li>Category (speciality), icon 25×25</li><li>Content List: pick existing items and drag them into order; types can be mixed</li></ul></div>
+      <div class="wide"><h4>Marketing Notifications (the only content type that needs approval)</h4><ul>
+        <li>Type: <b>Single Push</b> or <b>Health Tips</b> (several notifications, using "+ Add Notification")</li>
+        <li>Content: title, redirection URL, text for each notification</li>
+        <li>Settings: scheduled date and time, Valid Till, Frequency (repeats), Gap between notifications (hours/weeks), Hospitals</li>
+        <li>Audience: Age group, Gender, Target Segment with an AND/OR operator, Device</li>
+        <li>Send for Approval, then a reviewer Approves or Sends Back; Edit is locked while pending</li></ul></div>
+      <ul class="issues"><li>"Journey Based Health Tips" appears on a View but isn't an option on Create</li><li>The author dropdown placeholder reads "Select Status"</li><li>"Video" vs "Videos"</li><li>Publish Date is shown but there's no field to set it</li></ul>
+      <p class="figma wide">Figma: Manage Content <code>31028:315260</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-notification" data-tags="">
+    <summary><span class="t">Notifications (staff inbox)</span><span class="tags"><span class="pill p-grey">From the header bell</span></span>
+      <span class="what">The staff inbox for system events, mostly <b>approval requests</b> from other modules. Opening one goes straight to the record to Approve or Send Back.</span></summary>
+    <div class="body">
+      <div><h4>Bell dropdown</h4><ul><li>Count badge and an unread dot on each item</li><li>Title, time ago, a 2-line message</li><li>"See All" opens the full list</li></ul></div>
+      <div><h4>Notifications page</h4><ul><li>Date button (Today…); filters: Hospitals, Case Type</li><li>Columns: Case Type, Message, Hospital, Status, Date &amp; Time</li><li>Actions: View, <b>Dismiss</b> (with Undo in the toast)</li></ul></div>
+      <div><h4>Case types seen</h4><ul><li>Service Configuration Approval</li><li>PHC Schedule Created / Updated</li><li>Doctor / PHC High-Level Schedule</li><li>Report ready to download (from Reports)</li></ul></div>
+      <ul class="issues"><li>There's no sidebar item for it</li><li>The dropdown uses refund placeholder copy</li><li>Typo: "dismiss successfully"</li><li>Frames are 1652 px wide</li></ul>
+      <p class="figma wide">Figma: Notification <code>31298:360049</code></p>
+    </div>
+  </details>
+  </div>
+
+  <!-- CONTROL -->
+  <div class="domain" id="d-control"><h3><span class="bar" style="background:var(--fg-3)"></span>Reports, audit &amp; support</h3>
+  <p>Insight, traceability, and fixing integration failures.</p>
+
+  <details class="mod" id="m-reports" data-tags="">
+    <summary><span class="t">Reports</span><span class="tags"><span class="pill p-grey">Report builder</span></span>
+      <span class="what">Admins define reports: a data source, the roles allowed to see it, columns and filters. Users then run, filter and export them. Export runs in the background and finishes as a download link in the notification panel.</span></summary>
+    <div class="body">
+      <div><h4>Define</h4><ul><li>Report Name, Business Object (e.g. <code>MSREPORTS.ALL_APPOINTMENTS</code>), Applicable Roles</li><li>Columns as chips, ordered by dragging</li><li>Filters grid: Column, Operator (= ≠ &gt; &lt;), Default value, <b>Is Hidden</b></li><li>Actions: View, Edit, <b>Clone</b> (name and source locked)</li></ul></div>
+      <div><h4>Run</h4><ul><li>Filters card (Hospital, Doctor GID, Booking Status/Type/Source, UHID, date ranges…)</li><li>Scrollable data table with status pills</li><li>Export Report → "Generating…" toast → bell notification → download link</li></ul></div>
+      <ul class="issues"><li>Report Title and Description appear on View but not on Create</li><li>Every filter is marked required</li><li>The button is "Export" in some frames and "Generate" in others</li></ul>
+      <p class="figma wide">Figma: Reports <code>32254:311408</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-audit" data-tags="">
+    <summary><span class="t">Audit Trail</span><span class="tags"><span class="pill p-grey">Read-only</span></span>
+      <span class="what">A global change log across content entities (categories, services, orders, specialities). Each entry opens a field-level diff.</span></summary>
+    <div class="body">
+      <div><h4>List</h4><ul><li>Columns: Content ID, Content Type, Content Name, Date Timestamp, Action By, View</li><li>Search only; no type, user or date filters</li></ul></div>
+      <div><h4>View</h4><ul><li>Content ID/Type/Name, Timestamp, Action ID, Agent Name</li><li>Diff legend: <span class="pill p-green">New</span> <span class="pill p-red">Old version / Deleted</span> <span class="pill p-gold">Updated – new version</span></li></ul></div>
+      <ul class="issues"><li>"Action By" in the list vs "Agent Name" in View; the diff is a static image; the frame is 1652 px wide</li></ul>
+      <p class="figma wide">Figma: Audit Trail <code>30948:330492</code></p>
+    </div>
+  </details>
+
+  <details class="mod" id="m-prayas" data-tags="">
+    <summary><span class="t">Prayas / Support Services</span><span class="tags"><span class="pill p-grey">Internal support</span><span class="pill p-violet">Being renamed</span></span>
+      <span class="what">A support console for <b>HIS integration failures</b>. Staff find invoices, tariffs or refunds whose API sync failed, inspect the request and response, <b>retry</b>, or <b>raise a ticket</b>.</span></summary>
+    <div class="body">
+      <div><h4>Three record types</h4><ul><li><b>Invoices:</b> patient registration, invoice and advance receipt. "Bill: Generated / Not Generated" filter</li><li><b>Tariffs:</b> price-master sync for a doctor, package or service</li><li><b>Refunds:</b> HIS approval and gateway status; partial refunds per cancelled test</li></ul></div>
+      <div><h4>Tools</h4><ul><li>Date scope (default Today) and Hospital filter</li><li>Search-by selector (Order ID, Transaction ID, UHID…)</li><li>Detail page: Support Timeline of API calls with JSON payloads</li><li>Retry API (capped: "2 Attempts left"); Bulk Retry</li><li>Generate Ticket, which needs investigation notes</li></ul></div>
+      <p class="figma wide">Figma: Prayas <code>38131:355795</code> · the newer sidebar label is "Support Services"</p>
+    </div>
+  </details>
+  </div>
+</section>
+
+<!-- ============ MATRIX ============ -->
+<section id="matrix">
+  <div class="eyebrow">At a glance</div>
+  <h2>Module matrix</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Module</th><th>Create here?</th><th>Approval</th><th>Low-level calendar</th><th>Mainly used by <em>(inferred)</em></th></tr></thead>
+    <tbody>
+      <tr><td>Users / Roles</td><td class="yes">Yes</td><td class="no">No</td><td class="no">—</td><td>Corporate IT / Admin</td></tr>
+      <tr><td>Hospitals</td><td class="no">Edit only</td><td class="no">No</td><td class="no">—</td><td>Corporate / Unit IT</td></tr>
+      <tr><td>Payor</td><td class="no">Edit only</td><td class="no">No</td><td class="no">—</td><td>Corporate Finance</td></tr>
+      <tr><td>Coupons</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">—</td><td>Marketing</td></tr>
+      <tr><td>Doctors</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">—</td><td>Unit / Corporate Marketing</td></tr>
+      <tr><td>Speciality / Service Categories</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">—</td><td>Corporate Marketing</td></tr>
+      <tr><td>Keyword</td><td class="yes">Yes</td><td class="no">No</td><td class="no">—</td><td>Marketing</td></tr>
+      <tr><td>Service Configuration</td><td class="no">No (HIS)</td><td class="yes">Yes</td><td class="no">—</td><td>Corporate</td></tr>
+      <tr><td>PHC Information</td><td class="no">No (HIS)</td><td class="yes">Yes</td><td class="no">—</td><td>Corporate / Unit</td></tr>
+      <tr><td>PHC Package Category</td><td class="yes">Yes</td><td class="no">No</td><td class="no">—</td><td>Corporate</td></tr>
+      <tr><td>Doctor Schedule</td><td class="no">No button designed</td><td class="yes">Yes</td><td class="yes">Yes + ad-hoc</td><td>Unit operations</td></tr>
+      <tr><td>Category Schedule</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes + ad-hoc</td><td>Unit operations</td></tr>
+      <tr><td>PHC Schedule</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes (no ad-hoc)</td><td>Unit operations</td></tr>
+      <tr><td>Patients</td><td class="yes">Register</td><td class="no">Merge only</td><td class="no">—</td><td>Call centre, front desk</td></tr>
+      <tr><td>Appointments</td><td class="no">No</td><td class="no">No</td><td class="no">—</td><td>Call centre, front desk</td></tr>
+      <tr><td>Reports</td><td class="yes">Yes + Clone</td><td class="no">Unclear</td><td class="no">—</td><td>All roles (by role)</td></tr>
+      <tr><td>Audit Trail</td><td class="no">Read-only</td><td class="no">—</td><td class="no">—</td><td>Admin, compliance</td></tr>
+      <tr><td>Support Services (Prayas)</td><td class="no">Tickets</td><td class="no">—</td><td class="no">—</td><td>IT support</td></tr>
+      <tr><td>Orders</td><td class="no">Reorder only</td><td class="no">No</td><td class="no">—</td><td>Call centre, lab desk</td></tr>
+      <tr><td>Refunds</td><td class="no">View-only</td><td class="no">HIS decides</td><td class="no">—</td><td>Finance, support</td></tr>
+      <tr><td>Payment Gateway</td><td class="yes">Yes (flow not designed)</td><td class="no">No</td><td class="no">—</td><td>Corporate Finance / IT</td></tr>
+      <tr><td>Content Management</td><td class="yes">Yes</td><td class="yes">Notifications only</td><td class="no">—</td><td>Marketing</td></tr>
+      <tr><td>Notifications</td><td class="no">System-generated</td><td class="no">Links to approvals</td><td class="no">—</td><td>Approvers</td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ============ DESIGN SYSTEM ============ -->
+<section id="design">
+  <div class="eyebrow">Design system</div>
+  <h2>Design system</h2>
+  <p class="lede">From the in-file "myFortis — Client Design System Reference" (306 variables, 12 text styles). Font: <b>Manrope</b> throughout. Bind to semantic tokens, not raw hex values.</p>
+
+  <h3>Brand &amp; status colours</h3>
+  <div class="swatches">
+    <div class="sw"><i style="background:#0CA854"></i><div><b>Brand Green</b><span class="mono">#0CA854</span><span>Primary buttons, active nav, Success</span></div></div>
+    <div class="sw"><i style="background:#0E8746"></i><div><b>Green 700</b><span class="mono">#0E8746</span><span>Hover</span></div></div>
+    <div class="sw"><i style="background:#E83035"></i><div><b>Brand Red</b><span class="mono">#E83035</span><span>Error, negative button, Clear, required *</span></div></div>
+    <div class="sw"><i style="background:#C11419"></i><div><b>Note Red</b><span class="mono">#C11419</span><span>Note text</span></div></div>
+    <div class="sw"><i style="background:#CD984F"></i><div><b>Corporate Golden</b><span class="mono">#CD984F</span><span>Corporate profile badge</span></div></div>
+    <div class="sw"><i style="background:#FB8B24"></i><div><b>Pending</b><span class="mono">#FB8B24</span><span>Pending / warning-like</span></div></div>
+    <div class="sw"><i style="background:#EFFEF5"></i><div><b>Light Brand</b><span class="mono">#EFFEF5</span><span>Sidebar tint</span></div></div>
+    <div class="sw"><i style="background:#F6F7F7"></i><div><b>Surface Primary</b><span class="mono">#F6F7F7</span><span>Page canvas, zebra rows</span></div></div>
+  </div>
+  <div class="box"><h4>Grey ramp (slightly green-tinted), 50 → 950</h4>
+    <div class="ramp" aria-label="Grey ramp"><i style="background:#F6F7F7"></i><i style="background:#F0F2F1"></i><i style="background:#E2E5E4"></i><i style="background:#C4CBC7"></i><i style="background:#9FA9A3"></i><i style="background:#7A877F"></i><i style="background:#606C65"></i><i style="background:#4B5650"></i><i style="background:#3F4643"></i><i style="background:#353A38"></i><i style="background:#2E3330"></i><i style="background:#1D211F"></i></div>
+    <p style="font-size:13px;color:var(--fg-3)">Text: primary #353A38 · secondary #606C65 · placeholder #9FA9A3 · headings #2E3330 · labels #4B5650. Borders: #E2E5E4 by default, #0CA854 for brand, #E83035 for errors. There's <b>no Info or Warning colour</b>: only Success, Error and Pending.</p></div>
+
+  <h3>Type scale (Manrope)</h3>
+  <div class="typescale">
+    <div><small>h3 · PageTitle · 24/32 Bold</small><span style="font-size:24px;font-weight:700;line-height:32px">Doctor High-Level Schedule</span></div>
+    <div><small>h5 · SectionHeading · 18/28 SemiBold</small><span style="font-size:18px;font-weight:600">Basic Info</span></div>
+    <div><small>h6 · 16/24 SemiBold</small><span style="font-size:16px;font-weight:600">Payment Details</span></div>
+    <div><small>Button · 16/24 SemiBold</small><span style="font-size:16px;font-weight:600">Send for Approval</span></div>
+    <div><small>Body / Input · 14/24 Regular · +0.5</small><span style="font-size:14px;letter-spacing:.5px">Fortis Memorial Research Institute, Gurugram</span></div>
+    <div><small>Label · 13/20 Regular · +0.5</small><span style="font-size:13px;letter-spacing:.5px;color:var(--fg-2)">Schedule Available Till *</span></div>
+    <div><small>Note · 13/24 · Red 700</small><span style="font-size:13px;color:var(--red-ink)">Note: Tests with conflicting payment options cannot be added in a single order.</span></div>
+  </div>
+  <p class="meta">Also saved but not seen in use: h1 40/56 ExtraBold, h2 32 Bold, h4 20 SemiBold, Hyperlink 14 Medium underlined.</p>
+
+  <div class="grid2">
+    <div class="box"><h3>Layout</h3><dl class="kv">
+      <dt>Artboard</dt><dd>1512 × 982 (MacBook Pro 14")</dd><dt>Header</dt><dd>80 px; logo, bell, user name and team</dd>
+      <dt>Sidebar</dt><dd>320 px, light green; active item is a solid green pill</dd><dt>Content</dt><dd>Starts at x=352, 1128 wide</dd>
+      <dt>Cards</dt><dd>White, radius ~16, 32 padding, 24 gap</dd><dt>Fields</dt><dd>516 wide (2 columns, 32 gap) or 242 (4 per row)</dd>
+      <dt>Footer bar</dt><dd>80 px sticky action bar on long forms</dd></dl></div>
+    <div class="box"><h3>Spacing · radius · shadow</h3><dl class="kv">
+      <dt>Spacing</dt><dd>2 · 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48 · 56 (no "sm" step)</dd>
+      <dt>Radius</dt><dd>Inputs ~8 · cards ~16 · buttons are pills</dd>
+      <dt>Card shadow</dt><dd>0 4 12, #353A38 at 5%</dd><dt>Dropdown</dt><dd>0 4 12, black at 12%</dd></dl>
+      <p style="font-size:13px;color:var(--red-ink)">There are two radius scales with clashing names: "sm" is 4 in one and 8 in the other.</p></div>
+    <div class="box"><h3>Components</h3>
+      <p style="font-size:13px;font-weight:700">Documented</p>
+      <div class="chips"><span class="chip">Button (48px pill): primary, secondary, tertiary, negative, disabled</span><span class="chip">Label + Input (48px)</span><span class="chip">Dropdown / multi-select</span><span class="chip">Radio</span><span class="chip">Checkbox</span><span class="chip">Status badge</span><span class="chip">PageTitle (back, breadcrumb)</span><span class="chip">Collapsible section heading</span><span class="chip">Sidebar item</span><span class="chip">Table header and cell (zebra)</span><span class="chip">Search &amp; Filter bar</span><span class="chip">Pagination</span></div>
+      <p style="font-size:13px;font-weight:700">Used in screens, not specified</p>
+      <div class="chips"><span class="chip">Toast</span><span class="chip">Confirm modal 325 × 340</span><span class="chip">Overlay</span><span class="chip">Date / range picker</span><span class="chip">Time picker</span><span class="chip">Rich-text editor</span><span class="chip">File upload</span><span class="chip">Chips with "+N more"</span><span class="chip">Column chooser tab</span><span class="chip">Tabs</span><span class="chip">OTP input</span><span class="chip">Slot date strip</span></div></div>
+  </div>
+</section>
+
+<!-- ============ ISSUES ============ -->
+<section id="issues">
+  <div class="eyebrow">Before you design</div>
+  <h2>Gaps &amp; open questions</h2>
+  <div class="grid2">
+    <div class="box"><h3>Ask the business</h3><ul>
+      <li>What do <b>UFC/FD Approval</b> and Refund Workflow Status on a hospital control?</li>
+      <li>Who approves what? Is it based on role level?</li>
+      <li>What does <b>AGP</b> stand for? It tags the Roles and Tests &amp; Services updates</li>
+      <li>Schedule horizon: is it a date ("Available Till") or a number of weeks (max 8)?</li>
+      <li>What triggers <b>Auto cancelled</b>? When does a payment link expire?</li>
+      <li>Who approves profile merges? What happens after 3 failed OTP attempts?</li>
+      <li>What happens to booked appointments when a slot is set to Blocked?</li>
+      <li>Does Start/Stop Consultation stay in Appointments?</li>
+      <li>What is the maximum number of retries in Support Services, and where do tickets go?</li>
+      <li>Where does a new doctor or PHC schedule start? No Create button is designed</li>
+      <li>Payment Gateway: how is a new gateway added, and where is the 60% alert set?</li>
+      <li>Should "Partially Cancelled" be its own order status?</li>
+      <li>Who receives which notification types? What does Undo restore?</li></ul></div>
+    <div class="box"><h3>Design gaps</h3><ul>
+      <li>There's no full status colour map (Inactive, Sent Back and the others aren't specified)</li>
+      <li>Tabs, toggles, date pickers, upload and empty states aren't in the design system</li>
+      <li>The slot date-strip colours (orange, red, grey) have no legend</li>
+      <li>Audit Trail has no filters by type, user or date, and the diff is a static image</li>
+      <li>Past IP Admissions and Past Orders tabs aren't designed</li>
+      <li>The 26-item flat sidebar has no grouping; a good candidate for UX improvement</li>
+      <li><b>Not designed yet:</b> Dashboard, Edit Patient Profile, Add Payment Mode, and the approve/send-back screens for Reports</li></ul></div>
+    <div class="box"><h3>Inconsistencies to clean up</h3><ul>
+      <li>Mixed date formats: <code>12/10/25, 06:23 PM</code> · <code>27-01-2025</code> · <code>20 Sep 2023</code></li>
+      <li>Payor vs Payer; Speciality vs Specialty; Tele Consultation vs Teleconsultation</li>
+      <li>"Booking Type" vs "Service Type" for the same column</li>
+      <li>Payment status words: Success / Paid, Pay at Hospital / Pending</li>
+      <li>Totals that don't add up in the booking summaries</li>
+      <li>Typos: Apporval, Coupn, weels, Availibility, Adress, "successfully1", "may need lead to conflict"</li>
+      <li>Copy-paste leftovers: two sidebar items active at once, "Speciality Icon" on PHC, "Approve Configuration"</li></ul></div>
+  </div>
+</section>
+
+<!-- ============ FIGMA MAP ============ -->
+<section id="figma">
+  <div class="eyebrow">Find it in Figma</div>
+  <h2>Figma map</h2>
+  <p class="lede">To open a section, replace <code>:</code> with <code>-</code> in the node ID and add it to the file link as <code>?node-id=…</code>. File: <span class="mono">figma.com/design/c50UMULqAIbCHOjs0BJwoW</span></p>
+  <div class="tbl"><table><thead><tr><th>Section</th><th>Node</th><th>Section</th><th>Node</th></tr></thead><tbody>
+    <tr><td>Login</td><td class="mono">23163:58903</td><td>Doctor High-Level Schedule</td><td class="mono">24468:86784</td></tr>
+    <tr><td>Users</td><td class="mono">23163:56936</td><td>Doctor Low-Level Schedule</td><td class="mono">25039:88413</td></tr>
+    <tr><td>Roles</td><td class="mono">23163:54661</td><td>Categories Schedule</td><td class="mono">28369:224493</td></tr>
+    <tr><td>Hospitals</td><td class="mono">23163:52078</td><td>Categories Low-level</td><td class="mono">28369:224075</td></tr>
+    <tr><td>Hospital Type</td><td class="mono">37354:297994</td><td>PHC Schedule</td><td class="mono">30054:290453</td></tr>
+    <tr><td>Payor</td><td class="mono">23163:58419</td><td>PHC Low-Level Schedule</td><td class="mono">30137:324990</td></tr>
+    <tr><td>Coupons</td><td class="mono">26939:258945</td><td>Patient's Module</td><td class="mono">26708:292964</td></tr>
+    <tr><td>Doctors</td><td class="mono">23163:52976</td><td>Appointments</td><td class="mono">30265:337869</td></tr>
+    <tr><td>Speciality Management</td><td class="mono">23163:55298</td><td>Orders</td><td class="mono">30948:288347</td></tr>
+    <tr><td>Keyword</td><td class="mono">23163:56286</td><td>Refunds</td><td class="mono">32460:317214</td></tr>
+    <tr><td>Service Category</td><td class="mono">26643:185969</td><td>Multi-payment gateway</td><td class="mono">38537:313760</td></tr>
+    <tr><td>Service Configuration</td><td class="mono">30137:316145</td><td>Manage Content</td><td class="mono">31028:315260</td></tr>
+    <tr><td>PHC Information</td><td class="mono">30148:329739</td><td>Notification</td><td class="mono">31298:360049</td></tr>
+    <tr><td>PHC Package Category</td><td class="mono">28336:319266</td><td>Reports</td><td class="mono">32254:311408</td></tr>
+    <tr><td>Tests &amp; Services (AGP)</td><td class="mono">37477:344389</td><td>Audit Trail</td><td class="mono">30948:330492</td></tr>
+    <tr><td>Roles (AGP)</td><td class="mono">37038:294655</td><td>Prayas</td><td class="mono">38131:355795</td></tr>
+    <tr><td>Design System reference</td><td class="mono">38085:364628</td><td></td><td></td></tr>
+  </tbody></table></div>
+  <footer>Compiled from the approved Figma page. Items marked <em>(inferred)</em> are interpretations and need confirming with product or business owners.</footer>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var q=document.getElementById('q'), mods=[].slice.call(document.querySelectorAll('.mod')),
+      domains=[].slice.call(document.querySelectorAll('.domain')), btns=[].slice.call(document.querySelectorAll('.filterbar button')),
+      empty=document.getElementById('empty'), mode='all';
+  function apply(){
+    var term=(q.value||'').trim().toLowerCase(), shown=0;
+    mods.forEach(function(m){
+      var okTag = mode==='all' || (m.getAttribute('data-tags')||'').indexOf(mode)>-1;
+      var okText = !term || m.textContent.toLowerCase().indexOf(term)>-1;
+      m.hidden = !(okTag && okText);
+      if(!m.hidden){shown++; if(term) m.open=true;}
+    });
+    domains.forEach(function(d){ d.hidden = !d.querySelector('.mod:not([hidden])'); });
+    empty.style.display = shown ? 'none' : 'block';
+  }
+  q.addEventListener('input',apply);
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    mode=b.getAttribute('data-f'); btns.forEach(function(x){x.setAttribute('aria-pressed', String(x===b));}); apply(); }); });
+  document.getElementById('expand').addEventListener('click',function(){mods.forEach(function(m){if(!m.hidden)m.open=true;});});
+  document.getElementById('collapse').addEventListener('click',function(){mods.forEach(function(m){m.open=false;});});
+  function openHash(){ var el=location.hash && document.getElementById(location.hash.slice(1)); if(el && el.tagName==='DETAILS'){el.open=true;} }
+  window.addEventListener('hashchange',openHash); openHash();
+  var idx=document.querySelector('.index'), mb=document.getElementById('menuBtn');
+  mb.addEventListener('click',function(){var o=idx.classList.toggle('open'); mb.setAttribute('aria-expanded',String(o)); mb.textContent=o?'✕ Close':'☰ Contents';});
+  document.querySelectorAll('#toc a').forEach(function(a){a.addEventListener('click',function(){idx.classList.remove('open'); mb.setAttribute('aria-expanded','false'); mb.textContent='☰ Contents';});});
+  document.querySelectorAll('.tbl table').forEach(function(t){
+    var heads=[].map.call(t.querySelectorAll('thead th'),function(th){return th.textContent.trim();});
+    t.querySelectorAll('tbody tr').forEach(function(tr){[].forEach.call(tr.children,function(td,i){td.setAttribute('data-label',heads[i]||'');});});
+  });
+  document.querySelectorAll('a[href^="#m-"]').forEach(function(a){a.addEventListener('click',function(){var el=document.getElementById(a.getAttribute('href').slice(1)); if(el){el.hidden=false; el.open=true;}});});
+})();
+</script>
+
+</body></html>
